@@ -1,0 +1,15 @@
+assign, w, 0,
+add, x, y, t1
+assign, x, t1,
+breq, x, y, label1
+assign, y, x,
+add, x, 1, t2
+assign, x, t2
+goto, label2, ,
+label1:
+assign, y, z,
+add, z, 1, t3
+assign, z, t3
+label2:
+add, x, z, t4
+assign, w, t4
