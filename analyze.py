@@ -87,19 +87,15 @@ def genInOut(table):
     order = list(reversed(['I{}'.format(i+1) for i in range(len(table))]))
     for ld in sorted(table.items(),key=lambda i:order.index(i[0])):
         #generate out[I] = U(in[s]), s in succ[I]
-        print 'Generating OUT for {}'.format(ld[0])
         for s in ld[1]['succ']:
             table[ld[0]]['out'].extend(table[s]['in'])
         table[ld[0]]['out']=list(set(table[ld[0]]['out']))
-        print '\t{}'.format(','.join(table[ld[0]]['out']))
-        print 'Generating IN for {}'.format(ld[0])
         #generate in[I] = use[I] U (out[I]-def[i])
         _use = ld[1]['use']
         _def = ld[1]['def']
         _out = table[ld[0]]['out']
         table[ld[0]]['in'] = _use + list(set(_out)-set(_def))
         table[ld[0]]['in']=list(set(table[ld[0]]['in']))
-        print '\t{}'.format(','.join(table[ld[0]]['in']))
     return table
 
 	
