@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 def spawnTable(fn):
     with open(fn, 'r') as f:
         stmts = [[t.strip() for t in l.split(',')] for l in f.readlines()]
@@ -83,19 +85,37 @@ def genDefUse(fn):
     return table
 
 
+def genOut(table,instr):
+    I = table[instr]
+    out = deepcopy(I['out'])
+    for s in I['succ']:
+        succ = table[s]
+        for sp in succ['in']:
+            out.append(sp)
+    return list(set(out))
+    
+def genIn(table,instr):
+    I = table[instr]
+    _in = deepcopy(I['in'])
+    _def = set(I['def'])
+    _use = set(I['use'])
+    _out = set(I['out'])
+    _in.extend(list(_use | (_out - _def)))
+    return _in
+    
 def genInOut(table):
     order = list(reversed(['I{}'.format(i+1) for i in range(len(table))]))
-    for ld in sorted(table.items(),key=lambda i:order.index(i[0])):
-        #generate out[I] = U(in[s]), s in succ[I]
-        for s in ld[1]['succ']:
-            table[ld[0]]['out'].extend(table[s]['in'])
-        table[ld[0]]['out']=list(set(table[ld[0]]['out']))
-        #generate in[I] = use[I] U (out[I]-def[i])
-        _use = ld[1]['use']
-        _def = ld[1]['def']
-        _out = table[ld[0]]['out']
-        table[ld[0]]['in'] = _use + list(set(_out)-set(_def))
-        table[ld[0]]['in']=list(set(table[ld[0]]['in']))
+    change = True
+    for X in [0,19]:
+        table_state = table.copy()
+        for ld in sorted(table.items(),key=lambda i:order.index(i[0])):
+            instr = ld[0]
+            table[instr]['out'] = genOut(table,instr)
+            table[instr]['in'] = genIn(table,instr)
+            table[instr]['out'] = list(set(table[instr]['out']))
+            table[instr]['in'] = list(set(table[instr]['in']))
+        if table_state == table:
+            change = False
     return table
 
 	
@@ -110,11 +130,12 @@ def getProgVars(table):
 
 def getLiveRanges(table):
     _vars = getProgVars(table)
-	
-	
+
+    
+
 # print table
 def print_Table(table,stmt=True):
-    pstr = '{: <10}{: <30}{: <10}{: <10}{: <15}{: <15}{: <15}{: <15}'
+    pstr = '{: <10}{: <30}{: <10}{: <10}{: <20}{: <20}{: <15}{: <15}'
     prows=['','Statement' if stmt else '' ,'Def','Use','In','Out','pred','succ' ]
     print pstr.format(*prows)
     print '-' * 120

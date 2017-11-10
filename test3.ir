@@ -1,0 +1,14 @@
+label1:
+breq,c,0,label3
+add,y,1,t1
+assign,x,t1,
+mult,2,z,t2
+assign,y,t2,
+breq,d,0,label2
+add,y,z,t3
+assign,x,t3,
+label2:
+assign,z,1,
+goto,label1, ,
+label3:
+assign,z,x,
