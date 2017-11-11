@@ -106,7 +106,7 @@ def genIn(table,instr):
 def genInOut(table):
     order = list(reversed(['I{}'.format(i+1) for i in range(len(table))]))
     change = True
-    for X in [0,19]:
+    for X in range(200):
         table_state = table.copy()
         for ld in sorted(table.items(),key=lambda i:order.index(i[0])):
             instr = ld[0]

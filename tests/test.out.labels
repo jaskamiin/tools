@@ -1,0 +1,17 @@
+          Statement                     Def       Use       In                  Out                 pred           succ           
+------------------------------------------------------------------------------------------------------------------------
+I1        assign, w, 0,                 (w)       ()        (y,x,z)             (y,x,z)             ()             (I2)           
+I2        add, x, y, t1                 (t1)      (y,x)     (y,x,z)             (y,z,t1)            (I1)           (I3)           
+I3        assign, x, t1,                (x)       (t1)      (y,z,t1)            (y,x,z)             (I2)           (I4)           
+I4        breq, x, y, label1            ()        (y,x)     (y,x,z)             (x,z)               (I3)           (I5,I10)       
+I5        assign, y, x,                 (y)       (x)       (x,z)               (x,z)               (I4)           (I6)           
+I6        add, x, 1, t2                 (t2)      (x)       (x,z)               (z,t2)              (I5)           (I7)           
+I7        assign, x, t2                 (x)       (t2)      (z,t2)              (x,z)               (I6)           (I8)           
+I8        goto, label2, ,               ()        ()        (x,z)               (x,z)               (I7)           (I14)          
+I9        label1:                       ()        ()        (x,z)               (x,z)               ()             (I10)          
+I10       assign, y, z,                 (y)       (z)       (x,z)               (x,z)               (I9,I4)        (I11)          
+I11       add, z, 1, t3                 (t3)      (z)       (x,z)               (x,t3)              (I10)          (I12)          
+I12       assign, z, t3                 (z)       (t3)      (x,t3)              (x,z)               (I11)          (I14)          
+I13       label2:                       ()        ()        (x,z)               (x,z)               ()             (I14)          
+I14       add, x, z, t4                 (t4)      (x,z)     (x,z)               (t4)                (I8,I13,I12)   (I15)          
+I15       assign, w, t4                 (w)       (t4)      (t4)                ()                  (I14)          ()             
